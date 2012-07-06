@@ -3,6 +3,6 @@
 * message.py  
 	 Class MessagePort
 * server.py  
-	Class Server, using gevent
+	Class MessageServer, using gevent
 * netable.py  
 	Class Netable, turning a class to be callable via network
