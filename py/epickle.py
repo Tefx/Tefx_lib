@@ -101,19 +101,24 @@ class Pickler(object):
 		return __import__(s)
 
 	def requires(self, f):
-		return {k:v for k,v in f.func_globals.iteritems() if isinstance(v, types.ModuleType) and k not in self. ignores}
+		fg = f.func_globals
+		g = {k:v for k,v in fg.iteritems() if isinstance(v, types.ModuleType) and k not in self. ignores}
+		for k in f.func_code.co_names:
+			if k in fg:
+				g[k] = fg[k]
+		return g
 		
 
 if __name__ == '__main__':
 	p = Pickler()
 
 	def f(x):
-		return x+2
+		return x+20
 
 	import math
 
 	def g(x):
-		return math.sqrt(x)+id(2)
+		return f(x)+id(2)
 
 	a = p.dumps(g)
 	g2 = p.loads(a)

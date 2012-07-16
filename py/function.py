@@ -1,37 +1,25 @@
-import marshal
-from types import FunctionType
+import inspect
 
+def partial(f, x):
+	return lambda *args: f(x, *args)
+ 
+def count_args(f):
+	return len(inspect.getargspec(f).args)
 
-class Func(object):
-	def __init__(self, f=None, dumped=None):
-		if f:
-			self.f_code = marshal.dumps(f.func_code)
-		elif dumped:
-			self.f_code = dumped
-		self.f = None
+def partial_map(f, l):
+	if count_args(f) == 1:
+		return map(f, l)
+	else:
+		return [partial(f, i) for i in l]
 
-	def __call__(self, *args):
-		if not self.f:
-			self.f = FunctionType(marshal.loads(self.f_code), {})
-		return self.f(*args)
-
-	def pack(self):
-		return self.f_code
-
-	@classmethod
-	def unpack(cls, dumped):
-		return cls(dumped = dumped)
+def permutation(arg, *other):
+	for i in arg:
+		if not other:
+			yield (i, )
+		else:
+			for x in permutation(*other):
+				yield (i,) + x
 
 if __name__ == '__main__':
-	f = Func(lambda x: x * 2)
-	print f(2)
-	k = f.pack()
-
-	g = Func.unpack(k)
-	print g(2)
-
-	@Func
-	def test(a):
-		return a+1
-
-	print test.pack()
+	a = permutation(*map(range, [3,3]))
+	print [x for x in a]

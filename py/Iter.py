@@ -1,4 +1,5 @@
 import  pickle
+import types
 
 class Iter(object):
 
@@ -31,6 +32,24 @@ class Iter(object):
 							   self.step*num)
 			    for x in self._first(num)]
 
+class Permutation(object):
+	def __init__(self, *args):
+		self.iterl = args
+		self.engine = self.permutation(*args)
+
+	def __iter__(self):
+		return self
+
+	def permutation(arg, *other):
+		for i in arg:
+			if not other:
+				yield (i, )
+			else:
+				for x in self.permutation(*other):
+					yield (i,) + x
+
+	def next(self):
+		return self.engine
 
 def Collector(iter_list):
 	while iter_list:
@@ -40,18 +59,6 @@ def Collector(iter_list):
 			except StopIteration:
 				iter_list.remove(i)
 
-
- 
 if __name__ == '__main__':
-	r = Iter(0, lambda x,s:x+s, lambda x:x<10)
-
-	sl = r.deivde(3)
-	c = Collector(sl)
-
-	print type(lambda x: x+1)
-
-
-	print r.__core__
-
-	print r.__class__.__name__  in globals()
-	print globals()
+	 a = Iter(1, lambda x,t:x+t, lambda x:x<10)
+	 print isinstance(a, types.GeneratorType)
